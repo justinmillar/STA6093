@@ -1,6 +1,6 @@
 ---
 title: "Logistic Regression"
-comment: "*introduction to classification*"
+comment: "*classification by regression*"
 output: 
   html_document:
     toc: true

@@ -1,6 +1,6 @@
 ---
 title: "Introduction to R Markdown"
-comment: "*making readable doucments in R*"
+comment: "*making readable documents in R*"
 output: 
   html_document:
     toc: true
