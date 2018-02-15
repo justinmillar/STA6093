@@ -1,0 +1,22 @@
+---
+title: "NBA Scouting"
+comment: "*using linear regression*"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+### Ideas for assignment
+* Check for outliers/missing values
+* Create summary statistics/tables
+    + Sorting by categories
+    + Summary statistics
+* Compare simple vs. multiple linear regression
+*  Interpret results from `lm()`
+* Use regression to make predictions
+ 
+### Notes
+* Data sources:
+* Reminder it introduces messiness into data
+* Need to include summary of variables

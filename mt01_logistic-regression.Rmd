@@ -1,0 +1,10 @@
+---
+title: "Logistic Regression"
+comment: "*introduction to classification*"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+This will be brief primer on logistic regression and it's implementation in R.

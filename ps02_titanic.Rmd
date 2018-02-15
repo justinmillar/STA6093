@@ -1,0 +1,15 @@
+---
+title: "Surviving the Titanic"
+comment: "*using logistic regression*"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+### Idea for assignment
+
+Analysis the Titanic dataset from Kaggle using logistics regression.
+
+### Notes
+* Logistic regression not covered in course, need an explainer in materials

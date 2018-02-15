@@ -1,0 +1,10 @@
+name: "STA6093"
+output_dir: "."
+navbar:
+  title: "STA6093: Supplemental Material"
+  left:
+    - text: "Exercises and Materials"
+      href: index.html
+output:
+  html_document:
+    theme: flatly

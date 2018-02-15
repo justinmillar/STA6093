@@ -1,0 +1,16 @@
+---
+title: "Exploring the Tidyverse"
+comment: "*via comparison to base R*"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+### Idea for assignment
+
+Introduce the tidyverse suite of packages for R programming by comparing base R lessons covered in this course to the *Hadley* alternatives.
+
+### Notes
+* Must have an explaination for the purpose of the tidyverse packages
+* Will have to include a bunch of external material
+* Can potential co-opt the SW/D Carpentry lesson materials
