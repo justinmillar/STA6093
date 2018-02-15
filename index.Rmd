@@ -1,5 +1,5 @@
 ---
-title: "Applied Statistics for Agricultural and Life Sciences"
+title: "Supplemental Exercises and Materials"
 ---
 
 ```{r setup, include = FALSE, warning = FALSE}
@@ -40,6 +40,7 @@ x <- x %>%
   )
 ```
 
+
 ### Bonus Exercises
 
 ```{r results = 'asis', echo = FALSE}
@@ -47,6 +48,7 @@ cat_bullet(x, "^ps")
 ```
 
 ### Additional Materials
+
 ```{r results = 'asis', echo = FALSE}
 cat_bullet(x, "^mt")
 ```
