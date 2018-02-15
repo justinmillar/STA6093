@@ -1,8 +1,9 @@
-name: "STA6093"
-output_dir: "."
+name: STA6093
+output_dir: '.'
 navbar:
-  title: "STA6093: Introduction to Applied Statistics for Agricultural and Life Sciences"
-
+  type: inverse
+  title: 'STA6093: Introduction to Applied Statistics for Agricultural and Life Sciences'
 output:
   html_document:
     theme: flatly
+
