@@ -1,0 +1,10 @@
+---
+title: "Introduction to R Markdown"
+comment: "*making readable doucments in R*"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+Some info on making R Markdown files
