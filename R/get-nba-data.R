@@ -59,13 +59,8 @@ mine <- function(url) {
 mine2 <- function(url) {
   
   url <- paste("https://www.basketball-reference.com", url, sep = "")
+  html <- read_html(url)
   
-  page <- GET(url)
-  
-  html <- content(page, "text") %>%
-    gsub(pattern = "<!--", replacement = "") %>%
-    gsub(pattern = "-->", replacement = "") %>%
-    xml2::read_html(raw_html)
   name <- html %>% 
     html_node('#footer_header > 
               div:nth-child(2) > 
@@ -78,23 +73,12 @@ mine2 <- function(url) {
     html_node("#per_game") %>%
     html_table(fill = TRUE) %>%
     janitor::clean_names() %>%
-    filter(season == 'Career')
+    filter(season == 'Career') %>% 
+    select(nbappg = pts)
   
-  stats <- html %>%
-    html_node("#all_college_stats") %>%
-    html_table(header = FALSE, fill = TRUE) %>%
-    filter(row_number()!=1) %>%
-    select(-c(5,13,14,19)) %>%
-    set_colnames((.[1,])) %>%
-    filter(row_number()!=1) %>%
-    mutate(School = unique(.$College)[1]) %>%
-    filter(Season == "Career") %>%
-    janitor::clean_names() %>%
-    mutate(name = name, nbappg = nba$pts, nbagames = nba$g) %>%
-    select(name, school, games = g, mpg = mp, pts, reb = trb, ast,
-           fgpercent, x3ppercent, ftpercent, nbappg, nbagames)
+  out <- cbind(name, nba)
   
-  stats
+  out
 }
 
 # All players
@@ -107,4 +91,39 @@ player_links <- read_html("https://www.basketball-reference.com/leagues/NBA_2017
   unique()
 
 player_list <- map(player_links, mine)
+
+player_dt <- player_list %>% 
+  Filter(. %>% is.null %>% `!`, .) %>%
+  map_df(extract, c("name", "school", "games", "pts", "games", "mpg", "pts",
+                    "reb", "ast", "fgpercent", "x3ppercent", "ftpercent"))
+
+write_csv(x = player_dt, "data/nba-college-data.csv")
+
+player_nba <- map(player_links[1:5], mine2)
+
+#----
+
+
+
+player_dt$nbappg <- player_list %>% 
+  Filter(. %>% is.null %>% `!`, .) %>%
+  map_chr(., "nbappg") %>% 
+  as.numeric() %>% 
+  unique()
+
+
+player_list %>% 
+  Filter(. %>% is.null %>% `!`, .) %>%
+  map_chr(., "nbappg") %>% 
+  as.numeric() %>% 
+  unique()
+
+
+player_list %>% 
+  Filter(. %>% is.null %>% `!`, .) %>%
+  tibble(
+    name = map_chr(., "name"),
+    pts = map_chr(., "pts")
+  ) %>% 
+  head()
 
