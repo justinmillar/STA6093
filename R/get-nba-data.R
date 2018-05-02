@@ -29,12 +29,6 @@ mine <- function(url) {
                 span:nth-child(1)') %>% 
       html_text()
     
-    # nba <- html %>%
-    #   html_node("#per_game") %>%
-    #   html_table(fill = TRUE) %>%
-    #   janitor::clean_names() %>%
-    #   filter(season == 'Career')
-    
     stats <- html %>%
       html_node("#all_college_stats") %>%
       html_table(header = FALSE, fill = TRUE) %>%
@@ -54,31 +48,6 @@ mine <- function(url) {
     NULL
   }
   
-}
-
-mine2 <- function(url) {
-  
-  url <- paste("https://www.basketball-reference.com", url, sep = "")
-  html <- read_html(url)
-  
-  name <- html %>% 
-    html_node('#footer_header > 
-              div:nth-child(2) > 
-              span:nth-child(4) > 
-              strong:nth-child(1) > 
-              span:nth-child(1)') %>% 
-    html_text()
-  
-  nba <- html %>%
-    html_node("#per_game") %>%
-    html_table(fill = TRUE) %>%
-    janitor::clean_names() %>%
-    filter(season == 'Career') %>% 
-    select(nbappg = pts)
-  
-  out <- cbind(name, nba)
-  
-  out
 }
 
 # All players
@@ -107,21 +76,71 @@ draft_page <- read_csv("data/draft-page.csv", skip = 1) %>%
 
 draft_links <- as.character(draft_page$url)
 
-mine(player_links[4])
-mine(draft_links[1])
-map(draft_links[36], mine)
-
 draft_list <- map(draft_links, mine)
 
-
-
-draft_list %>% 
+draft_stats <- draft_list %>% 
   Filter(. %>% is.null %>% `!`, .) %>%
   map_df(extract, c("name", "school", "games", "pts", "games", "mpg", "pts",
-                         "reb", "ast", "fg_percent", "x3p_percent", "ft_percent"))
+                    "reb", "ast", "fg_percent", "x3p_percent", "ft_percent"))
 
-# player_nba <- map(player_links[1:5], mine2)
+write_csv(draft_stats, "data/draft-college-data.csv")
 
+# Creating final files
+nba_season_stats <- read_csv("data/nba-season-stats")
+
+nba_stats <- nba_season_stats %>% 
+  clean_names() %>% 
+  separate(player, c("name", "link"), sep = "\\\\") %>% 
+  group_by(-rk) %>%                # These two lines remove duplicate
+  filter(row_number(rk) == 1) #%>%  # entries from in-season trades
+  
+player_college_dt <- read_csv("data/nba-college-data.csv") 
+
+players <- player_college_dt %>% 
+  left_join(select(nba_stats, name, pos, nba_ppg = ps_g, nba_fgp = fg_percent)) %>% 
+  select(name, pos, school, games, mpg, pts,  reb, fgpercent, 
+         thr_percent = x3ppercent, ftpercent, nba_ppg, nba_fgp)
+
+s18 <- read_csv("data/nba-season-18.csv")   %>% 
+  clean_names() %>% 
+  separate(player, c("name", "link"), sep = "\\\\") %>% 
+  group_by(-rk) %>%                # These two lines remove duplicate
+  filter(row_number(rk) == 1) #%>%  # entries from in-season trades
+
+
+draft_stats[draft_stats$x3p_percent == "", "x3p_percent"]=NA
+
+prospects <- draft_stats %>%
+  as_tibble() %>% 
+  left_join(select(s18, name, pos)) %>% 
+  #na.omit() %>% 
+  select(name, pos, school, games, mpg, pts,  reb, fgpercent = fg_percent, 
+         thr_percent = x3p_percent, ftpercent = ft_percent) %>% 
+  mutate_at(vars(mpg:ftpercent), as.numeric) %>% 
+  mutate(games = as.integer(games))
+
+# Adding errnoeous data
+
+p <- tribble(        
+            ~name, ~pos,   ~school, ~games,  ~mpg,   ~pts, ~reb, ~fgpercent, ~thr_percent, ~ftpercent, ~nba_ppg, ~nba_fgp,
+    "Denis Valle", "SG", "FLORIDA",  21321,  74.2,   84.2,    0,      1.560,        3.522,      2.963,    -56.3,   -1.846,
+     "Ben Baiser", "PF", "RUTGERS",  48943,  82.2,   78.5, 56.3,      1.682,        2.663,      1.598,     89.6,    2.366
+  )
+
+q <- tribble(        
+            ~name, ~pos,      ~school, ~games,  ~mpg,   ~pts,  ~reb, ~fgpercent, ~thr_percent, ~ftpercent,  
+  "Lauren Trotta", "SG",    "FLORIDA",  51684,  75.2,   99.6,     0,      1.560,        3.522,      2.963, 
+   "Josh Epstein", "PF",    "FLORIDA",  51635,  81.2,   71.2,  97.9,      1.682,        2.663,      1.598,  
+  "Justin Millar", "PF", "MICHIGANST",  84324, -76.2,  -78.5, -56.3,      -1.82,        -2.63,      -1.58 
+)
+
+players_p <- rbind(players, p) %>% 
+  arrange(name) 
+prospects_q <- rbind(prospects, q)  %>% 
+  arrange(name)
+
+write_csv(players_p, "data/players.csv")
+write_csv(prospects_q, "data/prospects.csv")
 #----
 
 

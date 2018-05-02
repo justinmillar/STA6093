@@ -1,22 +1,105 @@
 ---
 title: "NBA Scouting"
 comment: "*using linear regression*"
-output: 
+output:
   html_document:
     toc: true
     toc_float: true
 ---
 
-### Ideas for assignment
-* Check for outliers/missing values
-* Create summary statistics/tables
-    + Sorting by categories
-    + Summary statistics
-* Compare simple vs. multiple linear regression
-*  Interpret results from `lm()`
-* Use regression to make predictions
- 
-### Notes
-* Data sources:
-* Reminder it introduces messiness into data
-* Need to include summary of variables
+```{r setup, echo=F, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(kableExtra)
+library(DT)
+```
+
+Congratulations! You've just been hired as an analytics scout for ~~unnamed NBA team~~. More good news, your team has the first overall pick in the upcoming draft. The team is turning to you and your statistical prowess to advise them on which prospect they should select.  
+\  
+
+## The Data
+
+### `Prospects` data
+Your predecessor has prepared two files for you. The `prospects` file contains college statistics for each of the prospects in this year's draft. The variables included in this data file are:
+
+```{r desc, echo=FALSE}
+
+prospects <- read_csv("data/prospects.csv", col_types = cols())
+dsc <- data.frame("Variable:" = names(prospects),
+                  "Description:" = c(
+                    "Prospect's name",
+                    "Position -  Point Guard (PG), Shooting Guard (SG), Small Forward (SF), Power Forward (PF), Center (C)",
+                    "School",
+                    "Number of games played",
+                    "Minutes per game",
+                    "Points per game",
+                    "Rebounds per game",
+                    "Field goal percentage",
+                    "Three point percentage",
+                    "Free throw percentage"
+                  ))
+
+kable(dsc, "html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover",
+                                      "condensed", "responsive"))
+```
+\  
+```{r prospects, echo=FALSE}
+
+datatable(prospects, options = list(pageLength = 5), caption = "Draft Prospects Collegiate Stats", rownames = FALSE)
+```
+
+\  
+
+### `Players` data
+  
+The `players` file contains the same information as `prospects` file (i.e. college stats) for each NBA player from this past season, as well as the their points per game (`nba_ppg`) and field goal percentage per game (`nba_fgp`) in the NBA.
+
+\  
+
+```{r players, echo=FALSE}
+
+prospects <- read_csv("data/players.csv", col_types = cols())
+
+datatable(prospects, options = list(pageLength = 5), caption = "NBA Players Collegiate Stats", rownames = FALSE)
+```
+
+\  
+
+Use the buttons below to download both datasets as CSV files:
+
+<button type="button" class="btn btn-success" onclick="location.href = 'https://justinmillar.github.io/STA6093/data/players.csv';">Download `players` data</button>
+<button type="button" class="btn btn-success" onclick="location.href = 'https://justinmillar.github.io/STA6093/data/prospects.csv';">Download `prospects` data</button>
+
+\  
+
+## The Assignment
+
+You've been tasked with providing a report that addresses a series of objectives (see below). Your report should consist of a explanatory text as well as table and figures, as well as the R code you create for your analysis. This could be submitted either as a Word document and a R script, or in a comprehensive [R Markdown](https://rmarkdown.rstudio.com/) file (this is the preferred method). 
+
+### Objective 1: Data Validation
+
+The previous analytics scout wasn't known for their rigorous data keeping (which is why you're here now). Before your start your analysis, be sure there aren't any erroneous entries in either the `prospects` or `players` files. If there are outliers, be sure to remove them from the data and provide a rationale for why each outlier was removed.
+
+### Objective 2: Descriptive Analysis
+
+Your general manager has asked you to provide a statistical summary of this year's prospects. She hasn't explicitly asked for specific comparisons, so it's up to you to design the descriptive report using the `prospects` file. Maybe you want to compare positions, or find the top prospects in each statistical category. It's up to you!
+
+Remember that the front office is not full of stats people, so it's best to rely on graphs whenever possible.   
+
+### Objective 3: Linear Regression
+
+The team's coach is an old-school guy. He thinks if you want to know how many points per game a prospect will score in the NBA, all you need is how many points they scored in college. Your general manager believes that it's important to included additional information.
+
+You've been tasked with settling the debate. Using the `players` data, create a simple linear regression using collegiate points per game to model NBA points per game, as well as a multiple regression that includes additional covariates. Then compare each model and determine who is right.
+
+Once again, it up to you to decide which variables to include, how you want to select the best multiple regression model, and the best way to compare both models to each other. Your analysis should clearly state which choices you make and why, and address underlying assumptions behind these models.
+
+### Objective 4: Predictive Analysis
+
+The moment of truth. The team has decided it wants to pick the best scorer in the draft. It is up to you use create a model using the `players` data with `nba_ppg` as the response/dependent variable and use that model to predict the best scorer in the `prospects` data. Be sure describe why you've chosen your model, which predictor/independent variables were most important, and how to account for confidence/uncertainty in the predictions.
+
+Hint: take a look at the help file for the `predict()` function.
+
+### Bonus Objective: Logistic Regression
+
+Scoring points is great, but it is also important to be efficient (there are only so many shots after all). Provide a similar prediction has in Objective 4, expect this time use `nba_fgp` as the response/dependent variable. Linear regression won't work for this binomial variable, so take a look the `glm()` function. 
