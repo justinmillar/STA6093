@@ -29,11 +29,11 @@ mine <- function(url) {
                 span:nth-child(1)') %>% 
       html_text()
     
-    nba <- html %>%
-      html_node("#per_game") %>%
-      html_table(fill = TRUE) %>%
-      janitor::clean_names() %>%
-      filter(season == 'Career')
+    # nba <- html %>%
+    #   html_node("#per_game") %>%
+    #   html_table(fill = TRUE) %>%
+    #   janitor::clean_names() %>%
+    #   filter(season == 'Career')
     
     stats <- html %>%
       html_node("#all_college_stats") %>%
@@ -44,11 +44,11 @@ mine <- function(url) {
       filter(row_number()!=1) %>%
       mutate(School = unique(.$College)[1]) %>%
       filter(Season == "Career") %>%
-      janitor::clean_names() %>%
-      mutate(name = name, nbappg = nba$pts, nbagames = nba$g) %>%
+      janitor::clean_names() %>% 
+      mutate(name = name) %>%
       select(name, school, games = g, mpg = mp, pts, reb = trb, ast,
-             fgpercent, x3ppercent, ftpercent, nbappg, nbagames)
-    
+             fg_percent, x3p_percent, ft_percent)
+
     stats
   } else {
     NULL
@@ -99,7 +99,28 @@ player_dt <- player_list %>%
 
 write_csv(x = player_dt, "data/nba-college-data.csv")
 
-player_nba <- map(player_links[1:5], mine2)
+
+draft_page <- read_csv("data/draft-page.csv", skip = 1) %>% 
+  select(Player) %>% 
+  separate(Player, c("first", "link"), sep = "\\\\") %>% 
+  mutate(url = paste("/players/", substr(link, 1, 1), "/", link, ".html", sep = ""))
+
+draft_links <- as.character(draft_page$url)
+
+mine(player_links[4])
+mine(draft_links[1])
+map(draft_links[36], mine)
+
+draft_list <- map(draft_links, mine)
+
+
+
+draft_list %>% 
+  Filter(. %>% is.null %>% `!`, .) %>%
+  map_df(extract, c("name", "school", "games", "pts", "games", "mpg", "pts",
+                         "reb", "ast", "fg_percent", "x3p_percent", "ft_percent"))
+
+# player_nba <- map(player_links[1:5], mine2)
 
 #----
 
