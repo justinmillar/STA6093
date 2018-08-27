@@ -13,7 +13,10 @@ library(kableExtra)
 library(DT)
 ```
 
-Congratulations! You've just been hired as an analytics scout for ~~unnamed NBA team~~. More good news, your team has the first overall pick in the upcoming draft. The team is turning to you and your statistical prowess to advise them on which prospect they should select.  
+Congratulations! You've just been hired as an analytics scout for ~~unnamed NBA team~~. More good news, your team has the first overall pick in the upcoming draft. The team is turning to you and your statistical prowess to advise them on which prospect they should select. 
+
+You've been tasked with submitting a **three page** report (plus relevant figures and code) on how you think your team should approach the draft using the information below. 
+
 \  
 
 ## The Data
@@ -74,7 +77,7 @@ Use the buttons below to download both datasets as CSV files:
 
 ## The Assignment
 
-You've been tasked with providing a report that addresses a series of objectives (see below). Your report should consist of a explanatory text as well as table and figures, as well as the R code you create for your analysis. This could be submitted either as a Word document and a R script, or in a comprehensive [R Markdown](https://rmarkdown.rstudio.com/) file (this is the preferred method). 
+Compile a **three page** report that addresses a series of objectives (see below). Your report should consist of a explanatory text as well as table and figures, and the R code you created for your analysis. This could be submitted either as a Word document and a R script, or in a comprehensive [R Markdown](https://rmarkdown.rstudio.com/) file (this is the preferred method). 
 
 ### Objective 1: Data Validation
 
@@ -100,6 +103,4 @@ The moment of truth. The team has decided it wants to pick the best scorer in th
 
 Hint: take a look at the help file for the `predict()` function.
 
-### Bonus Objective: Logistic Regression
 
-Scoring points is great, but it is also important to be efficient (there are only so many shots after all). Provide a similar prediction has in Objective 4, expect this time use `nba_fgp` as the response/dependent variable. Linear regression won't work for this binomial variable, so take a look the `glm()` function. 
