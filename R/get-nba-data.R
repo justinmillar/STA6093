@@ -50,7 +50,7 @@ mine <- function(url) {
   
 }
 
-# All players
+# All players ----
 
 player_links <- read_html("https://www.basketball-reference.com/leagues/NBA_2017_per_game.html") %>%
   html_nodes("#per_game_stats") %>%
@@ -85,7 +85,7 @@ draft_stats <- draft_list %>%
 
 write_csv(draft_stats, "data/draft-college-data.csv")
 
-# Creating final files
+# Creating final files ----
 nba_season_stats <- read_csv("data/nba-season-stats")
 
 nba_stats <- nba_season_stats %>% 
@@ -107,6 +107,7 @@ s18 <- read_csv("data/nba-season-18.csv")   %>%
   group_by(-rk) %>%                # These two lines remove duplicate
   filter(row_number(rk) == 1) #%>%  # entries from in-season trades
 
+draft_stats <- read_csv("data/draft-college-data.csv")
 
 draft_stats[draft_stats$x3p_percent == "", "x3p_percent"]=NA
 
@@ -119,19 +120,19 @@ prospects <- draft_stats %>%
   mutate_at(vars(mpg:ftpercent), as.numeric) %>% 
   mutate(games = as.integer(games))
 
-# Adding errnoeous data
+# Adding errnoeous data ----
 
 p <- tribble(        
             ~name, ~pos,   ~school, ~games,  ~mpg,   ~pts, ~reb, ~fgpercent, ~thr_percent, ~ftpercent, ~nba_ppg, ~nba_fgp,
-    "Denis Valle", "SG", "FLORIDA",  21321,  74.2,   84.2,    0,      1.560,        3.522,      2.963,    -56.3,   -1.846,
-     "Ben Baiser", "PF", "RUTGERS",  48943,  82.2,   78.5, 56.3,      1.682,        2.663,      1.598,     89.6,    2.366
+    "Denis Valle", "SG", "FLORIDA",     81,    66,   16.2,  1.3,      0.56,         0.370,      0.896,     7.36,    0.56,
+     "Ben Baiser", "PF", "RUTGERS",     79,    34,   18.9,  7.7,      1.682,        0.995,      1.598,     15.2,    1.236
   )
 
 q <- tribble(        
             ~name, ~pos,      ~school, ~games,  ~mpg,   ~pts,  ~reb, ~fgpercent, ~thr_percent, ~ftpercent,  
-  "Lauren Trotta", "SG",    "FLORIDA",  51684,  75.2,   99.6,     0,      1.560,        3.522,      2.963, 
-   "Josh Epstein", "PF",    "FLORIDA",  51635,  81.2,   71.2,  97.9,      1.682,        2.663,      1.598,  
-  "Justin Millar", "PF", "MICHIGANST",  84324, -76.2,  -78.5, -56.3,      -1.82,        -2.63,      -1.58 
+  "Lauren Trotta", "SG",    "FLORIDA",      0,  23.6,   37.6,  12.6,       0.96,         0.66,      0.99, 
+   "Josh Epstein", "PF",    "FLORIDA",      0,  19.5,   34.3,  11.9,       0.93,         0.75,      0.97,  
+  "Justin Millar", "PF", "MICHIGANST",      0,  22.2,   33.2,  13.3,       0.87,         0.71,      0.98 
 )
 
 players_p <- rbind(players, p) %>% 
